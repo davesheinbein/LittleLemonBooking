@@ -11,19 +11,19 @@ from django.http import HttpResponse
 logger = logging.getLogger(__name__)
 
 def home(request):
-    return render(request, 'menu/home.html')
+    return render(request, 'restaurant/home.html')
 
 def about(request):
-    return render(request, 'menu/about.html')
+    return render(request, 'restaurant/about.html')
 
 def reservations(request):
     date = request.GET.get('date', datetime.today().date())
     bookings = Booking.objects.filter(reservation_date=date)
     if not bookings:
         message = "There are many openings available"
-        return render(request, 'menu/bookings.html', {"message": message})
+        return render(request, 'restaurant/bookings.html', {"message": message})
     booking_json = serializers.serialize('json', bookings)
-    return render(request, 'menu/bookings.html', {"bookings": booking_json})
+    return render(request, 'restaurant/bookings.html', {"bookings": booking_json})
 
 def book(request):
     form = BookingForm()
@@ -32,11 +32,11 @@ def book(request):
         if form.is_valid():
             form.save()
     context = {'form': form}
-    return render(request, 'menu/book.html', context)
+    return render(request, 'restaurant/book.html', context)
 
 def menu(request):
     menu_data = Menu.objects.all().order_by('name')
-    return render(request, 'menu/menu.html', {"menu": menu_data})
+    return render(request, 'restaurant/menu.html', {"menu": menu_data})
 
 def display_menu_item(request, id=None):
     if id:
@@ -45,10 +45,10 @@ def display_menu_item(request, id=None):
             logger.debug(f"Selected menu_item: {menu_item}")
         except Menu.DoesNotExist:
             logger.debug(f"Menu item with id {id} does not exist.")
-            return render(request, 'menu/menu_item_not_found.html', status=404)
+            return render(request, 'restaurant/menu_item_not_found.html', status=404)
     else:
         menu_item = ""
-    return render(request, 'menu/menu_item.html', {"menu_item": menu_item})
+    return render(request, 'restaurant/menu_item.html', {"menu_item": menu_item})
 
 @csrf_exempt
 def bookings(request):
@@ -73,4 +73,4 @@ def bookings(request):
 
 def menu_item(request, id):
     item = get_object_or_404(Menu, pk=id)
-    return render(request, 'menu/menu_item.html', {'menu_item': item})
+    return render(request, 'restaurant/menu_item.html', {'menu_item': item})
