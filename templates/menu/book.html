@@ -1,0 +1,125 @@
+{% extends './base.html' %}
+<!-- prettier-ignore -->
+{% load static %}
+<!-- prettier-ignore -->
+{% block content %}
+<section>
+	<article>
+		<h1>Make a reservation</h1>
+		<!--Begin row-->
+		<div class="row">
+			<!--Begin col-->
+			<div class="column">
+				<form method="POST" id="form">
+					{% csrf_token %}
+					<p>
+						<label for="first_name">Name:</label>
+						<input
+							type="text"
+							placeholder="Your Name"
+							maxlength="200"
+							required=""
+							id="first_name"
+						/>
+					</p>
+					<p>
+						<label for="reservation_date">Date:</label>
+						<input
+							type="date"
+							id="reservation_date"
+							required=""
+						/>
+					</p>
+					<p>
+						<label for="reservation_slot">Reservation time:</label>
+						<select id="reservation_slot">
+							<option value="0" disabled>Select time</option>
+						</select>
+					</p>
+					<button type="submit" id="button">Reserve</button>
+				</form>
+				<p id="status" style="display: none;">Booking submitted successfully!</p>
+			</div>
+			<!--End col-->
+		</div>
+		<!--End row-->
+	</article>
+</section>
+<script>
+	const date = new Date();
+	document.getElementById('reservation_date').value = `${date.getFullYear()}-${(date.getMonth() + 1).toString().padStart(2, '0')}-${date.getDate().toString().padStart(2, '0')}`;
+
+	console.log(document.getElementById('reservation_date').value);
+	getBookings();
+
+	document.getElementById('reservation_date').addEventListener('change', getBookings);
+
+	function getBookings() {
+		let reserved_slots = [];
+		const date = document.getElementById('reservation_date').value;
+
+		fetch("{% url 'bookings' %}" + '?date=' + date)
+			.then((r) => r.json())
+			.then((data) => {
+				console.log('Fetch response:', data); // Add logging
+				reserved_slots = [];
+				bookings = '';
+
+				const dayOfWeek = new Date(date).getDay();
+				let slot_options = '<option value="0" disabled>Select time</option>';
+				let startHour = 14;
+				let endHour = 22;
+
+				if (dayOfWeek === 6) {
+					endHour = 23;
+				} else if (dayOfWeek === 0) {
+					endHour = 21;
+				}
+
+				for (let hour = startHour; hour <= endHour; hour++) {
+					slot_options += `<option value="${hour}">${formatTime(hour)}</option>`;
+				}
+
+				document.getElementById('reservation_slot').innerHTML = slot_options;
+			})
+			.catch((error) => {
+				console.error('Error fetching bookings:', error); // Add error handling
+			});
+	}
+
+	function formatTime(time) {
+		const ampm = time < 12 ? 'AM' : 'PM';
+		const t = time < 12 ? time : time > 12 ? time - 12 : time;
+		const label = `${t} ${ampm}`;
+		return label;
+	}
+
+	document.getElementById('form').addEventListener('submit', function (e) {
+		e.preventDefault();
+		const csrftoken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+		const formdata = {
+			first_name: document.getElementById('first_name').value,
+			reservation_date: document.getElementById('reservation_date').value,
+			reservation_slot: document.getElementById('reservation_slot').value,
+		};
+
+		fetch("{% url 'bookings' %}", {
+			method: 'post',
+			headers: {
+				'Content-Type': 'application/json',
+				'X-CSRFToken': csrftoken,
+			},
+			body: JSON.stringify(formdata),
+		})
+			.then((r) => r.text())
+			.then((data) => {
+				console.log('Post response:', data); // Add logging
+				document.getElementById('status').style.display = 'block';
+				getBookings();
+			})
+			.catch((error) => {
+				console.error('Error posting booking:', error); // Add error handling
+			});
+	});
+</script>
+{% endblock %}

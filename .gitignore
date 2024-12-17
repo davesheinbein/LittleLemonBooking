@@ -1,0 +1,45 @@
+# Ignore Python bytecode files
+__pycache__/
+*.py[cod]
+
+# Ignore SQLite database file
+db.sqlite3
+
+# Ignore Django log files
+debug.log
+
+# Ignore media files
+media/
+
+# Ignore static files
+static/
+
+# Ignore environment variables file
+.env
+
+# Ignore VSCode settings
+.vscode/
+
+# Ignore macOS system files
+.DS_Store
+
+# Ignore migrations
+migrations/
+
+# Ignore coverage reports
+htmlcov/
+.coverage
+.coverage.*
+
+# Ignore pytest cache
+.pytest_cache/
+
+# Ignore Jupyter Notebook checkpoints
+.ipynb_checkpoints/
+
+# Ignore mypy cache
+.mypy_cache/
+
+# Ignore temporary files
+*.tmp
+*.log
