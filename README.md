@@ -93,3 +93,36 @@ To deploy the application to a production environment, follow these additional s
 3. Set up a web server (e.g., Gunicorn) and reverse proxy (e.g., Nginx).
 4. Configure static file handling with `collectstatic`.
 5. Secure the application with HTTPS.
+
+## API Authentication
+
+The API uses session and basic authentication. To access the API, you need to be authenticated. You can log in at `/api-auth/login/`.
+
+## API Paths
+
+- `/api/bookings/`
+- `/api/menu/`
+
+### MySQL Setup Instructions
+
+To use MySQL as your database, follow these steps:
+
+1. Install MySQL server and client.
+2. Create a database and user for the project.
+3. Update the `DATABASE_URL` in the `.env` file with your MySQL database credentials:
+
+```env
+DATABASE_URL=mysql://username:password@localhost:3306/dbname
+```
+
+4. Install the MySQL client library:
+
+```bash
+pip install mysqlclient
+```
+
+5. Apply the database migrations:
+
+```bash
+python manage.py migrate
+```

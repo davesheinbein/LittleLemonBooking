@@ -7,6 +7,10 @@ from datetime import datetime
 import json
 from django.views.decorators.csrf import csrf_exempt
 from django.http import HttpResponse
+from rest_framework import viewsets, filters
+from .serializers import BookingSerializer, MenuSerializer
+from rest_framework.pagination import PageNumberPagination
+from rest_framework.permissions import IsAuthenticated
 
 logger = logging.getLogger(__name__)
 
@@ -74,3 +78,26 @@ def bookings(request):
 def menu_item(request, id):
     item = get_object_or_404(Menu, pk=id)
     return render(request, 'restaurant/menu_item.html', {'menu_item': item})
+
+class StandardResultsSetPagination(PageNumberPagination):
+    page_size = 10
+    page_size_query_param = 'page_size'
+    max_page_size = 100
+
+class BookingViewSet(viewsets.ModelViewSet):
+    queryset = Booking.objects.all()
+    serializer_class = BookingSerializer
+    pagination_class = StandardResultsSetPagination
+    filter_backends = [filters.SearchFilter, filters.OrderingFilter]
+    search_fields = ['first_name', 'reservation_date']
+    ordering_fields = ['reservation_date', 'reservation_slot']
+    permission_classes = [IsAuthenticated]
+
+class MenuViewSet(viewsets.ModelViewSet):
+    queryset = Menu.objects.all()
+    serializer_class = MenuSerializer
+    pagination_class = StandardResultsSetPagination
+    filter_backends = [filters.SearchFilter, filters.OrderingFilter]
+    search_fields = ['name', 'description']
+    ordering_fields = ['name', 'price']
+    permission_classes = [IsAuthenticated]

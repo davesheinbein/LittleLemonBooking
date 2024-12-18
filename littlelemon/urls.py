@@ -18,10 +18,13 @@ from django.contrib import admin
 from django.urls import path, include
 from django.conf import settings
 from django.conf.urls.static import static
+from restaurant.urls import router as restaurant_router
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include('restaurant.urls')),
+    path('api/', include(restaurant_router.urls)),
+    path('api-auth/', include('rest_framework.urls')),  # Add this line for authentication URLs
 ]
 
 if settings.DEBUG:
