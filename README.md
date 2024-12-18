@@ -126,3 +126,10 @@ pip install mysqlclient
 ```bash
 python manage.py migrate
 ```
+
+
+6. API Paths to Test:
+
+1. /api/bookings/
+2. /api/menu/
+3. /api-auth/login/

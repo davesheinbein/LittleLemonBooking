@@ -7,10 +7,11 @@ from datetime import datetime
 import json
 from django.views.decorators.csrf import csrf_exempt
 from django.http import HttpResponse
-from rest_framework import viewsets, filters
-from .serializers import BookingSerializer, MenuSerializer
+from rest_framework import viewsets, filters, generics
+from .serializers import BookingSerializer, MenuSerializer, UserSerializer
 from rest_framework.pagination import PageNumberPagination
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.permissions import IsAuthenticated, AllowAny
+from django.contrib.auth.models import User
 
 logger = logging.getLogger(__name__)
 
@@ -101,3 +102,8 @@ class MenuViewSet(viewsets.ModelViewSet):
     search_fields = ['name', 'description']
     ordering_fields = ['name', 'price']
     permission_classes = [IsAuthenticated]
+
+class UserRegistrationView(generics.CreateAPIView):
+    queryset = User.objects.all()
+    serializer_class = UserSerializer
+    permission_classes = [AllowAny]

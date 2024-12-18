@@ -1,6 +1,7 @@
-from django.urls import path
+from django.urls import path, include
 from . import views
 from rest_framework.routers import DefaultRouter
+from rest_framework.authtoken.views import obtain_auth_token
 
 urlpatterns = [
     path('', views.home, name="home"),
@@ -10,6 +11,7 @@ urlpatterns = [
     path('menu/', views.menu, name="menu"),
     path('menu_item/<int:id>/', views.display_menu_item, name="menu_item"),  
     path('bookings', views.bookings, name='bookings'), 
+    path('api/registration/', views.UserRegistrationView.as_view(), name='registration'),  # Add this line for user registration
 ]
 
 router = DefaultRouter()
